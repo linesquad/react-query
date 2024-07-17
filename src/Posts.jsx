@@ -10,8 +10,9 @@ export function Posts() {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedPost, setSelectedPost] = useState(null);
 
-  // to get data we need to destructure data from use query
-  const { data } = useQuery({
+  // to get data we need to destructure data from use query,
+  // we can add as well more properties to destructure such as isLoading and isError
+  const { data, isLoading, error, isError } = useQuery({
     // first we need to add query key which always is array, it defines this data
     queryKey: ["posts"],
 
@@ -20,10 +21,21 @@ export function Posts() {
   });
 
   // in case we won't get anything from fetch we need state to return something
-  if (!data)
+  // if we have is Loading then we can use it before data will come
+  if (isLoading)
     return (
       <div>
-        <h1>There is nothing in data!</h1>
+        <h3>Fetching Data...</h3>
+      </div>
+    );
+
+  // in case we doesn't get data and something is wrong
+  if (isError)
+    return (
+      <div>
+        <h3>
+          Ooops something went wrong. <p>{error.message}</p>
+        </h3>
       </div>
     );
 
