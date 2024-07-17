@@ -18,6 +18,10 @@ export function Posts() {
 
     // second we need to settle query function which will provide fetching
     queryFn: fetchPosts,
+
+    // here we can set stale time, which means that how long will live data which is stale
+    // stale means its ready to refetch on refocus, refech
+    staleTime: 5000, // it means this data will be fresh and after amount time we give it will became stale
   });
 
   // in case we won't get anything from fetch we need state to return something
