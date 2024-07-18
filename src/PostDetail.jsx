@@ -6,7 +6,7 @@ export function PostDetail({ post }) {
   // we are using use query to get data and other functions
   const { data, isLoading, isError, error } = useQuery({
     // we have key of the data
-    queryKey: [post.id],
+    queryKey: ["comments", post.id],
     // here we need to callBack cuz we need to pass post id
     queryFn: () => fetchComments(post.id),
   });
