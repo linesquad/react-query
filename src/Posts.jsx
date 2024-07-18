@@ -7,17 +7,18 @@ import { PostDetail } from "./PostDetail";
 const maxPostPage = 10;
 
 export function Posts() {
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
 
   // to get data we need to destructure data from use query,
   // we can add as well more properties to destructure such as isLoading and isError
   const { data, isLoading, error, isError } = useQuery({
     // first we need to add query key which always is array, it defines this data
-    queryKey: ["posts"],
+    // we need to add a query key for pages so each pahe will cache diffrently
+    queryKey: ["posts", currentPage],
 
     // second we need to settle query function which will provide fetching
-    queryFn: fetchPosts,
+    queryFn: () => fetchPosts(currentPage),
 
     // here we can set stale time, which means that how long will live data which is stale
     // stale means its ready to refetch on refocus, refech
@@ -57,11 +58,23 @@ export function Posts() {
         ))}
       </ul>
       <div className="pages">
-        <button disabled onClick={() => {}}>
+        <button
+          disabled={currentPage === 1}
+          onClick={() => {
+            if (currentPage === 1) return;
+            setCurrentPage((cur) => cur - 1);
+          }}
+        >
           Previous page
         </button>
-        <span>Page {currentPage + 1}</span>
-        <button disabled onClick={() => {}}>
+        <span>Page {currentPage}</span>
+        <button
+          disabled={currentPage === maxPostPage}
+          onClick={() => {
+            if (currentPage === maxPostPage) return;
+            setCurrentPage((cur) => cur + 1);
+          }}
+        >
           Next page
         </button>
       </div>
