@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 // import to use query for fetching data
-import { useQuery } from "@tanstack/react-query";
+// we need to import use query client aswell for pre fetching data
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { fetchPosts, deletePost, updatePost } from "./api";
 import { PostDetail } from "./PostDetail";
@@ -9,6 +10,23 @@ const maxPostPage = 10;
 export function Posts() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPost, setSelectedPost] = useState(null);
+
+  // here we should create our client for prefetch
+  const queryClient = useQueryClient();
+
+  // we should use in use effect cuz current page is async so it might gives delay
+  useEffect(() => {
+    // validate when to prefetch
+    if (currentPage < maxPostPage) {
+      // define next page depending on current one
+      const nextPage = currentPage + 1;
+      // use prefetchQuery which has same body as use query
+      queryClient.prefetchQuery({
+        queryKey: ["posts", nextPage],
+        queryFn: () => fetchPosts(nextPage),
+      });
+    }
+  }, [currentPage, queryClient]);
 
   // to get data we need to destructure data from use query,
   // we can add as well more properties to destructure such as isLoading and isError
