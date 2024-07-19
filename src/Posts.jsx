@@ -20,6 +20,10 @@ export function Posts() {
     mutationFn: (postId) => deletePost(postId),
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (postId) => updatePost(postId),
+  });
+
   // we should use in use effect cuz current page is async so it might gives delay
   useEffect(() => {
     // validate when to prefetch
@@ -78,6 +82,7 @@ export function Posts() {
             onClick={() => {
               // we need to reset mutation cuz to not have same result
               deleteMutation.reset();
+              updateMutation.reset();
               setSelectedPost(post);
             }}
           >
@@ -109,7 +114,11 @@ export function Posts() {
       <hr />
       {selectedPost && (
         // we pass mutation here
-        <PostDetail post={selectedPost} deleteMutation={deleteMutation} />
+        <PostDetail
+          post={selectedPost}
+          deleteMutation={deleteMutation}
+          updateMutation={updateMutation}
+        />
       )}
     </>
   );
