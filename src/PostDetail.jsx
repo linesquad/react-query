@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchComments } from "./api";
 import "./PostDetail.css";
 
-export function PostDetail({ post }) {
+export function PostDetail({ post, deleteMutation }) {
   // we are using use query to get data and other functions
   const { data, isLoading, isError, error } = useQuery({
     // we have key of the data
@@ -18,7 +18,23 @@ export function PostDetail({ post }) {
   return (
     <>
       <h3 style={{ color: "blue" }}>{post.title}</h3>
-      <button>Delete</button> <button>Update title</button>
+      {/* on calling mutation we also make as anonymous and pass argument */}
+      {/* in this dic we just show if its working and test multiple mutate properties */}
+      <div>
+        <button onClick={() => deleteMutation.mutate(post.id)}>Delete</button>{" "}
+        {deleteMutation.isPending && <p className="loading">Deleting post</p>}
+        {deleteMutation.isError && (
+          <p className="error">
+            Error while deleting post: {deleteMutation.error.toString()}
+          </p>
+        )}
+        {deleteMutation.isSuccess && (
+          <p className="success">Post was deleted</p>
+        )}
+      </div>
+      <div>
+        <button>Update title</button>
+      </div>
       <p>{post.body}</p>
       <h4>Comments</h4>
       {data.map((comment) => (

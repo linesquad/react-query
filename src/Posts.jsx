@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 // import to use query for fetching data
 // we need to import use query client aswell for pre fetching data
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+// we are importing mutate function
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { fetchPosts, deletePost, updatePost } from "./api";
 import { PostDetail } from "./PostDetail";
@@ -13,6 +14,11 @@ export function Posts() {
 
   // here we should create our client for prefetch
   const queryClient = useQueryClient();
+
+  // here we declare use mutation which doesnt need keys and only needs function which takes an argument
+  const deleteMutation = useMutation({
+    mutationFn: (postId) => deletePost(postId),
+  });
 
   // we should use in use effect cuz current page is async so it might gives delay
   useEffect(() => {
@@ -69,7 +75,11 @@ export function Posts() {
           <li
             key={post.id}
             className="post-title"
-            onClick={() => setSelectedPost(post)}
+            onClick={() => {
+              // we need to reset mutation cuz to not have same result
+              deleteMutation.reset();
+              setSelectedPost(post);
+            }}
           >
             {post.title}
           </li>
@@ -97,7 +107,10 @@ export function Posts() {
         </button>
       </div>
       <hr />
-      {selectedPost && <PostDetail post={selectedPost} />}
+      {selectedPost && (
+        // we pass mutation here
+        <PostDetail post={selectedPost} deleteMutation={deleteMutation} />
+      )}
     </>
   );
 }
